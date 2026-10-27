@@ -1,0 +1,92 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions
+    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="Definitions_DiscountApproval"
+    targetNamespace="http://example.com/discount-approval">
+
+  <bpmn:process id="DiscountApprovalProcess"
+                name="Discount Approval Workflow"
+                isExecutable="true">
+
+    <bpmn:startEvent id="StartEvent" name="Start"/>
+
+    <bpmn:scriptTask id="CalculateDiscount"
+                     name="Calculate Discount Rate"
+                     scriptFormat="javascript">
+      <bpmn:script><![CDATA[
+        // Example input: discountAmount and orderAmount
+        var discountRate = (discountAmount / orderAmount) * 100;
+        execution.setVariable("discountRate", discountRate);
+      ]]></bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:exclusiveGateway id="DiscountGateway"
+                           name="Discount > 20%?"/>
+
+    <bpmn:userTask id="ManagerApproval"
+                   name="Manager Approval"/>
+
+    <bpmn:exclusiveGateway id="ApprovalGateway"
+                           name="Approved?"/>
+
+    <bpmn:serviceTask id="ProcessPayment"
+                      name="Process Payment &amp; Notify"/>
+
+    <bpmn:endEvent id="ApprovedEnd"
+                   name="Approved"/>
+
+    <bpmn:endEvent id="RejectedEnd"
+                   name="Rejected"/>
+
+    <bpmn:sequenceFlow id="Flow1"
+                       sourceRef="StartEvent"
+                       targetRef="CalculateDiscount"/>
+
+    <bpmn:sequenceFlow id="Flow2"
+                       sourceRef="CalculateDiscount"
+                       targetRef="DiscountGateway"/>
+
+    <bpmn:sequenceFlow id="Flow3"
+                       name="YES"
+                       sourceRef="DiscountGateway"
+                       targetRef="ManagerApproval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${discountRate > 20}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow4"
+                       name="NO"
+                       sourceRef="DiscountGateway"
+                       targetRef="ProcessPayment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${discountRate <= 20}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow5"
+                       sourceRef="ManagerApproval"
+                       targetRef="ApprovalGateway"/>
+
+    <bpmn:sequenceFlow id="Flow6"
+                       name="YES"
+                       sourceRef="ApprovalGateway"
+                       targetRef="ProcessPayment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${approved == true}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow7"
+                       name="NO"
+                       sourceRef="ApprovalGateway"
+                       targetRef="RejectedEnd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${approved == false}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow8"
+                       sourceRef="ProcessPayment"
+                       targetRef="ApprovedEnd"/>
+
+  </bpmn:process>
+</bpmn:definitions>
+

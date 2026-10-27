@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1177dwh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:process id="Process_1e1e1qu" name="ScriptTask" isExecutable="true" camunda:historyTimeToLive="10">
+    <bpmn:extensionElements />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1d2t7ti</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1d2t7ti" sourceRef="StartEvent_1" targetRef="Activity_0h8dfk2" />
+    <bpmn:scriptTask id="Activity_0h8dfk2" name="TestScript" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1d2t7ti</bpmn:incoming>
+      <bpmn:outgoing>Flow_1epiolk</bpmn:outgoing>
+      <bpmn:script>print("Hello,This is a script task from BPMN Diagram");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1epiolk" sourceRef="Activity_0h8dfk2" targetRef="Activity_1ehz4u7" />
+    <bpmn:scriptTask id="Activity_1ehz4u7" name="External Script Task" scriptFormat="JavaScript" camunda:resource="external_Resource.js">
+      <bpmn:incoming>Flow_1epiolk</bpmn:incoming>
+      <bpmn:outgoing>Flow_12n80lz</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_12n80lz" sourceRef="Activity_1ehz4u7" targetRef="testServiceTask" />
+    <bpmn:sequenceFlow id="Flow_0mq2fbs" sourceRef="testServiceTask" targetRef="JavaDelegateTask" />
+    <bpmn:serviceTask id="testServiceTask" name="Test Service Task" camunda:class="org.camunda.bpm.spring.boot.example.simple.kumar.service.TestJavaClassExample">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="City">${"banglore"}</camunda:inputParameter>
+          <camunda:outputParameter name="City_new">${City}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12n80lz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mq2fbs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0jsmie3" sourceRef="JavaDelegateTask" targetRef="Activity_0lpfjkh" />
+    <bpmn:serviceTask id="JavaDelegateTask" name="Test Java Delegate Task" camunda:delegateExpression="${testJavaDelegateTask}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="City_1">${"Hyderabad"}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mq2fbs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jsmie3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_0lpfjkh" name="Test User Task">
+      <bpmn:incoming>Flow_0jsmie3</bpmn:incoming>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1e1e1qu">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15n9u99_di" bpmnElement="Activity_0h8dfk2">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d5ciiq_di" bpmnElement="Activity_1ehz4u7">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a5ky8k_di" bpmnElement="testServiceTask">
+        <dc:Bounds x="620" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16uq30o_di" bpmnElement="JavaDelegateTask">
+        <dc:Bounds x="810" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1g0fwme_di" bpmnElement="Activity_0lpfjkh">
+        <dc:Bounds x="980" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1d2t7ti_di" bpmnElement="Flow_1d2t7ti">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1epiolk_di" bpmnElement="Flow_1epiolk">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="460" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12n80lz_di" bpmnElement="Flow_12n80lz">
+        <di:waypoint x="560" y="120" />
+        <di:waypoint x="620" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mq2fbs_di" bpmnElement="Flow_0mq2fbs">
+        <di:waypoint x="720" y="120" />
+        <di:waypoint x="810" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jsmie3_di" bpmnElement="Flow_0jsmie3">
+        <di:waypoint x="910" y="120" />
+        <di:waypoint x="980" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
